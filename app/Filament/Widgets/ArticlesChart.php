@@ -54,18 +54,25 @@ class ArticlesChart extends ApexChartWidget
         if($period == 'monthly'){
             $startDate = now()->startOfYear();
             $endDate = now()->endOfYear();
+            $monthly = true;
+            $daily = false;
         }else{
             $startDate = now()->startOfMonth();
             $endDate = now()->endOfMonth();
+            $monthly = false;
+            $daily = true;
         }
+//        dd($monthly,$daily);
         $data = Trend::model(Article::class)
             ->between(
                 start: $startDate,
                 end: $endDate,
-            )
-            ->perMonth(false)
-            ->perDay()
-            ->count();
+            );
+        if($monthly){
+            $data =$data->perMonth()->count();
+        }else{
+            $data =$data->perDay()->count();
+        }
         return [
             'chart' => [
                 'type' => 'line',

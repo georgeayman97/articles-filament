@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\ArticleResource\Pages;
 
 use App\Filament\Resources\ArticleResource;
+use App\Models\Article;
+use Illuminate\Contracts\View\View;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

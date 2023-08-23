@@ -15,6 +15,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use RalphJSmit\Filament\SEO\SEO;
 
 class ArticleResource extends Resource
 {

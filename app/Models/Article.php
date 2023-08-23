@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
+use RalphJSmit\Laravel\SEO\Support\HasSEO;
 
 /**
  * @property string $name
@@ -16,6 +17,7 @@ use Illuminate\Support\Str;
 class Article extends Model
 {
     use HasFactory;
+    use HasSEO;
 
     protected $fillable = [
         'title',
@@ -27,6 +29,15 @@ class Article extends Model
         'author_id',
     ];
 
+    public function getDynamicSEOData(): array
+    {
+        return [
+            'title' => $this->title,
+            'description' => $this->content,
+            'author' => $this->author->name,
+        ];
+    }
+
     /**
      * Set the article slug
      *
@@ -34,7 +45,6 @@ class Article extends Model
      */
     public function slug(): Attribute
     {
-
         return Attribute::make(
             set: function (string $value) {
                 $originalSlug = Str::slug($this->attributes['title']);
@@ -55,15 +65,21 @@ class Article extends Model
     protected function image(): Attribute
     {
         return Attribute::make(
-            set: fn (?string $value) => $value==null? null :url('storage/'.$value),
+            set: fn(?string $value) => $value == null ? null : url('storage/' . $value),
         );
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class, 'author_id')->where('status', 'active');
     }
 
+    /**
+     * @return BelongsToMany
+     */
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'article_category', 'article_id', 'category_id')->whereStatus(
@@ -71,11 +87,17 @@ class Article extends Model
         )->withTimestamps();
     }
 
+    /**
+     * @return MorphMany
+     */
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
 
+    /**
+     * @return BelongsToMany
+     */
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'article_tag', 'article_id', 'tag_id')->whereStatus(
