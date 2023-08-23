@@ -1173,7 +1173,7 @@
                 :page-options="$getPaginationPageOptions()"
                 :paginator="$records"
                 class="px-3 py-3 sm:px-6"
-                style="background-color: #899cc5"
+                style="background-color: #003da6b3"
             />
         @endif
 

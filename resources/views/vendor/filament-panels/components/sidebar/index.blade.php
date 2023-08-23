@@ -29,13 +29,14 @@
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
-    @style([
-        'background-color: #369595 ;',
-        'dark:background-color: blue ;',
-    ])
+{{--    @style([--}}
+{{--        'background-color: #369595 ;',--}}
+{{--        'dark:background-color: blue ;',--}}
+{{--    ])--}}
 >
     <header
-        class="fi-sidebar-header flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm"
+        class="fi-sidebar-header flex h-20 items-center bg-white px-6 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm"
+        style="height: 81px"
     >
         {{-- format-ignore-start --}}
         <div

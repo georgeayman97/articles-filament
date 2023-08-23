@@ -3,20 +3,18 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ArticleResource\Pages;
-use App\Filament\Resources\ArticleResource\RelationManagers;
+use App\Filament\Resources\ArticleResource\RelationManagers\CommentsRelationManager;
 use App\Models\Article;
 use App\Models\Category;
-use Closure;
 use Filament\Forms;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-use Filament\Forms\Get;
-use Illuminate\Validation\Rules\Unique;
 
 class ArticleResource extends Resource
 {
@@ -30,7 +28,7 @@ class ArticleResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()
+                Group::make()
                     ->schema([
                         Forms\Components\Section::make()
                             ->schema([
@@ -57,7 +55,6 @@ class ArticleResource extends Resource
                                         'in-active' => 'In Active',
                                     ])
                                     ->default('active'),
-
                                 Forms\Components\MarkdownEditor::make('content')
                                     ->columnSpan('full'),
                             ])
@@ -68,128 +65,147 @@ class ArticleResource extends Resource
                     ->schema([
                         Forms\Components\Checkbox::make('is_image')
                             ->label('Add Image')
-                            ->hidden(fn (Get $get): bool => $get('is_video'))
+                            ->hidden(fn(Get $get): bool => $get('is_video'))
                             ->live(),
                         Forms\Components\Checkbox::make('is_video')
                             ->label('Add Video')
-                            ->hidden(fn (Get $get): bool => $get('is_image'))
+                            ->hidden(fn(Get $get): bool => $get('is_image'))
                             ->live(),
                         Forms\Components\FileUpload::make('image')
                             ->label('Image')
                             ->image()
-                            ->visible(fn (Get $get): bool => $get('is_image'))
+                            ->visible(fn(Get $get): bool => $get('is_image'))
                             ->requiredIf('is_image', true)
                             ->disableLabel(),
                         Forms\Components\FileUpload::make('video')
                             ->label('Video')
-                            ->visible(fn (Get $get): bool => $get('is_video'))
+                            ->visible(fn(Get $get): bool => $get('is_video'))
                             ->requiredIf('is_video', 1)
                             ->disableLabel(),
                     ])
                     ->collapsible(),
                 Forms\Components\Group::make()
-                ->schema([
-                    Forms\Components\Section::make('Associations')
-                        ->schema([
-                            Forms\Components\Select::make('author_id')
-                                ->relationship('author', 'name')
-                                ->searchable()
-                                ->createOptionForm([
-                                    Forms\Components\TextInput::make('name')
-                                        ->required(),
-                                    Forms\Components\Select::make('status')
-                                        ->options([
-                                            'active' => 'Active',
-                                            'in-active' => 'In Active',
-                                        ])
-                                        ->default('active'),
-                                    Forms\Components\MarkdownEditor::make('bio')
-                                        ->columnSpan('full'),
-                                    Forms\Components\Section::make('Image')
-                                        ->schema([
-                                            Forms\Components\FileUpload::make('image')
-                                            ->label('Image')
-                                            ->image()
-                                            ->disableLabel(),
-                                        ])
-                                        ->collapsible(),
-                                ]),
-                            Forms\Components\Select::make('tags')
-                                ->relationship('tags', 'name')
-                                ->multiple()
-                                ->required()
-                                ->createOptionForm([
-                                    Forms\Components\TextInput::make('name')
-                                        ->maxValue(50)
-                                        ->required(),
-                                    Forms\Components\Select::make('status')
-                                        ->options([
-                                            'active' => 'Active',
-                                            'in-active' => 'In Active',
-                                        ])
-                                        ->default('active'),
-                                ]),
-                            Forms\Components\Select::make('categories')
-                                ->relationship('categories', 'name')
-                                ->multiple()
-                                ->required()
-                                ->createOptionForm([
-                                    Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Grid::make()
+                        Forms\Components\Section::make('Associations')
                             ->schema([
-                                Forms\Components\TextInput::make('name')
+                                Forms\Components\Select::make('author_id')
+                                    ->relationship('author', 'name')
+                                    ->searchable()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->required(),
+                                        Forms\Components\Select::make('status')
+                                            ->options([
+                                                'active' => 'Active',
+                                                'in-active' => 'In Active',
+                                            ])
+                                            ->default('active'),
+                                        Forms\Components\MarkdownEditor::make('bio')
+                                            ->columnSpan('full'),
+                                        Forms\Components\Section::make('Image')
+                                            ->schema([
+                                                Forms\Components\FileUpload::make('image')
+                                                    ->label('Image')
+                                                    ->image()
+                                                    ->disableLabel(),
+                                            ])
+                                            ->collapsible(),
+                                    ]),
+                                Forms\Components\Select::make('tags')
+                                    ->relationship('tags', 'name')
+                                    ->multiple()
                                     ->required()
-                                    ->maxValue(50)
-                                    ->live(onBlur: true)
-                                    ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'createOption' ? $set('slug', Str::slug($state)) : null),
-
-                                Forms\Components\TextInput::make('slug')
-                                    ->disabled()
-                                    ->dehydrated()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->maxValue(50)
+                                            ->required(),
+                                        Forms\Components\Select::make('status')
+                                            ->options([
+                                                'active' => 'Active',
+                                                'in-active' => 'In Active',
+                                            ])
+                                            ->default('active'),
+                                    ]),
+                                Forms\Components\Select::make('categories')
+                                    ->relationship('categories', 'name')
+                                    ->multiple()
                                     ->required()
-                                    ->unique(Category::class, 'slug', ignoreRecord: true),
+                                    ->createOptionForm([
+                                        Forms\Components\Section::make()
+                                            ->schema([
+                                                Forms\Components\Grid::make()
+                                                    ->schema([
+                                                        Forms\Components\TextInput::make('name')
+                                                            ->required()
+                                                            ->maxValue(50)
+                                                            ->live(onBlur: true)
+                                                            ->afterStateUpdated(
+                                                                fn(
+                                                                    string $operation,
+                                                                    $state,
+                                                                    Forms\Set $set
+                                                                ) => $operation === 'createOption' ? $set(
+                                                                    'slug',
+                                                                    Str::slug($state)
+                                                                ) : null
+                                                            ),
 
-                                Forms\Components\Select::make('status')
-                        ->options([
-                                        'active' => 'Active',
-                                        'in-active' => 'In Active',
-                                    ])
-                                    ->default('active'),
+                                                        Forms\Components\TextInput::make('slug')
+                                                            ->disabled()
+                                                            ->dehydrated()
+                                                            ->required()
+                                                            ->unique(Category::class, 'slug', ignoreRecord: true),
+
+                                                        Forms\Components\Select::make('status')
+                                                            ->options([
+                                                                'active' => 'Active',
+                                                                'in-active' => 'In Active',
+                                                            ])
+                                                            ->default('active'),
+                                                    ]),
+
+                                                Forms\Components\Select::make('parent_id')
+                                                    ->label('Parent')
+                                                    ->relationship(
+                                                        'parent',
+                                                        'name',
+                                                        fn(Builder $query) => $query->where('parent_id', null)
+                                                    )
+                                                    ->searchable()
+                                                    ->placeholder('Select parent category'),
+                                            ])
+                                            ->columnSpan(['lg' => fn(?Category $record) => $record === null ? 3 : 2]),
+
+                                        Forms\Components\Section::make('Image')
+                                            ->schema([
+                                                Forms\Components\FileUpload::make('image')
+                                                    ->label('Image')
+                                                    ->image()
+                                                    ->disableLabel(),
+                                            ])
+                                            ->collapsible(),
+                                        Forms\Components\Section::make()
+                                            ->schema([
+                                                Forms\Components\Placeholder::make('created_at')
+                                                    ->label('Created at')
+                                                    ->content(
+                                                        fn(Category $record
+                                                        ): ?string => $record->created_at?->diffForHumans()
+                                                    ),
+
+                                                Forms\Components\Placeholder::make('updated_at')
+                                                    ->label('Last modified at')
+                                                    ->content(
+                                                        fn(Category $record
+                                                        ): ?string => $record->updated_at?->diffForHumans()
+                                                    ),
+                                            ])
+                                            ->columnSpan(['lg' => 1])
+                                            ->hidden(fn(?Category $record) => $record === null),
+                                    ]),
                             ]),
-
-                            Forms\Components\Select::make('parent_id')
-                                ->label('Parent')
-                                ->relationship('parent', 'name', fn (Builder $query) => $query->where('parent_id', null))
-                                ->searchable()
-                                ->placeholder('Select parent category'),
-                            ])
-                            ->columnSpan(['lg' => fn (?Category $record) => $record === null ? 3 : 2]),
-
-                            Forms\Components\Section::make('Image')
-                                    ->schema([
-                                        Forms\Components\FileUpload::make('image')
-                                            ->label('Image')
-                                            ->image()
-                                            ->disableLabel(),
-                                    ])
-                                    ->collapsible(),
-                            Forms\Components\Section::make()
-                                ->schema([
-                                    Forms\Components\Placeholder::make('created_at')
-                                        ->label('Created at')
-                                        ->content(fn (Category $record): ?string => $record->created_at?->diffForHumans()),
-
-                                    Forms\Components\Placeholder::make('updated_at')
-                                        ->label('Last modified at')
-                                        ->content(fn (Category $record): ?string => $record->updated_at?->diffForHumans()),
-                                ])
-                                ->columnSpan(['lg' => 1])
-                                ->hidden(fn (?Category $record) => $record === null),
-                            ]),
-                        ]),
-                ])
-                ->columnSpan(['lg' => 2]),
+                    ])
+                    ->columnSpan(['lg' => 2]),
 
             ]);
     }
@@ -234,6 +250,11 @@ class ArticleResource extends Resource
                     ->label('Tags')
                     ->badge()
                     ->listWithLineBreaks()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('comments.user.name')
+                    ->label('Comment Users')
+                    ->listWithLineBreaks()
+                    ->limitList(2)
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -281,7 +302,7 @@ class ArticleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            CommentsRelationManager::class
         ];
     }
 

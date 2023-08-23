@@ -8,7 +8,7 @@
     {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
 >
     @if ($header)
-        <thead class="bg-gray-50 dark:bg-white/5" style="background-color: #899cc5">
+        <thead class="bg-gray-50 dark:bg-white/5" style="background-color: #003da6b3">
             <tr>
                 {{ $header }}
             </tr>

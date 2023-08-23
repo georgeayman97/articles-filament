@@ -46,7 +46,7 @@
         ])
         @if($active)
             @style([
-                'background-color: #112020;'=> $active,
+//                'background-color: #112020;'=> $active,
             ])
         @endif
     >
