@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Categories\Collection;
+use App\Http\Resources\Categories\CategoryCollection;
 use App\Services\Categories\Index;
 use Illuminate\Http\Request;
 
@@ -16,11 +16,11 @@ class CategoryController extends Controller
     {
     }
     /**
-     * @return Collection
+     * @return CategoryCollection
      */
-    public function index(): Collection
+    public function index(): CategoryCollection
     {
         $categories = $this->index->index();
-        return new Collection($categories);
+        return new CategoryCollection($categories);
     }
 }

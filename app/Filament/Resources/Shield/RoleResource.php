@@ -246,7 +246,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
 
     /**--------------------------------*
-    | Resource Related Logic Start     |
+    | CategoryResource Related Logic Start     |
     *----------------------------------*/
 
     public static function getResourceEntitiesSchema(): ?array
@@ -427,7 +427,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         }
     }
     /**--------------------------------*
-    | Resource Related Logic End       |
+    | CategoryResource Related Logic End       |
     *----------------------------------*/
 
     /**--------------------------------*

@@ -9,4 +9,6 @@ interface CategoryRepositoryInterface
 {
     public function index(): Collection|LengthAwarePaginator;
 
+    public function homeIndex(): Collection;
+
 }

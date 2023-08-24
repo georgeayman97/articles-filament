@@ -12,6 +12,7 @@ interface ArticleRepositoryInterface
     public function find($id): Model;
 
     public function index(): Collection|LengthAwarePaginator;
+    public function featured(): Collection|LengthAwarePaginator;
 
     public function create(ArticleDTO $articleDTO): Model;
 

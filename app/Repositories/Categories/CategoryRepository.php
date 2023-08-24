@@ -27,4 +27,10 @@ class CategoryRepository implements CategoryRepositoryInterface
         }
         return $this->model->whereStatus(ArticleStatus::ACTIVE)->get();
     }
+
+    public function homeIndex(): Collection
+    {
+        return $this->model->whereStatus(ArticleStatus::ACTIVE)->latest()->limit(3)
+            ->with('articles', fn($query) => $query->whereStatus(ArticleStatus::ACTIVE)->latest()->limit(5))->get();
+    }
 }

@@ -9,6 +9,7 @@ use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use App\Http\Responses\ErrorResponse;
 use App\Services\Articles\Find;
+use App\Services\Articles\Featured;
 use App\Services\Articles\Index;
 use App\Services\Articles\Store;
 use Illuminate\Http\JsonResponse;
@@ -40,11 +41,7 @@ class ArticleController extends Controller
     public function index()
     {
         $articles = $this->index->index();
-        if (isset(request()->paginate) && !is_numeric(request()->paginate)) {
-            return ErrorResponse::make('paginate must be integer', Response::HTTP_UNAUTHORIZED);
-        }
         return new ArticleCollection($articles);
-//        return SuccessResponse::make(['array' => $articles],Response::HTTP_OK);
     }
 
     /**

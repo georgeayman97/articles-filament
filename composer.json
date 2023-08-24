@@ -24,8 +24,11 @@
         "pboivin/filament-peek": "^2.0.0-beta2",
         "ralphjsmit/laravel-filament-seo": "^1.2",
         "ralphjsmit/laravel-seo": "^1.4",
+        "rappasoft/laravel-authentication-log": "^3.0",
         "ryangjchandler/blade-tabler-icons": "^2.0",
-        "spatie/laravel-medialibrary": "^10.11"
+        "spatie/laravel-medialibrary": "^10.11",
+        "tapp/filament-authentication-log": "^3.0",
+        "torann/geoip": "^3.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\ServicesController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Resources\ArticleResource;
@@ -28,3 +29,4 @@ Route::apiResource('categories', CategoryController::class);
 Route::apiResource('tags', TagController::class);
 Route::post('upload/media', [ServicesController::class, 'uploadImage']);
 Route::get('single/article/{id}', fn() => new ArticleResource(Article::find(request()->id)));
+Route::get('home',[HomeController::class,'index']);

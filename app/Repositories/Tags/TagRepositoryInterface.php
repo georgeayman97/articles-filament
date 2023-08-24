@@ -8,5 +8,6 @@ use Illuminate\Support\Collection;
 interface TagRepositoryInterface
 {
     public function index(): Collection|LengthAwarePaginator;
+    public function latest(): Collection;
 
 }

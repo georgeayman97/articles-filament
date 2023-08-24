@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\Articles\ArticleRepository;
 use App\Repositories\Articles\ArticleRepositoryInterface;
+use App\Repositories\Authors\AuthorRepository;
+use App\Repositories\Authors\AuthorRepositoryInterface;
 use App\Repositories\Categories\CategoryRepository;
 use App\Repositories\Categories\CategoryRepositoryInterface;
 use App\Repositories\Tags\TagRepository;
@@ -20,6 +22,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ArticleRepositoryInterface::class, ArticleRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
+        $this->app->bind(AuthorRepositoryInterface::class, AuthorRepository::class);
     }
 
     /**

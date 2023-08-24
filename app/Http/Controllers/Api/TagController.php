@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Tags\Collection;
+use App\Http\Resources\Tags\TagCollection;
 use App\Services\Tags\Index;
 use Illuminate\Http\Request;
 
@@ -16,11 +16,11 @@ class TagController extends Controller
     {
     }
     /**
-     * @return Collection
+     * @return TagCollection
      */
-    public function index(): Collection
+    public function index(): TagCollection
     {
         $tags = $this->index->index();
-        return new Collection($tags);
+        return new TagCollection($tags);
     }
 }

@@ -27,6 +27,7 @@ class Article extends Model
         'video',
         'content',
         'author_id',
+        'is_featured',
     ];
 
     public function getDynamicSEOData(): array
@@ -34,7 +35,7 @@ class Article extends Model
         return [
             'title' => $this->title,
             'description' => $this->content,
-            'author' => $this->author->name,
+            'author' => $this->author?->name,
         ];
     }
 

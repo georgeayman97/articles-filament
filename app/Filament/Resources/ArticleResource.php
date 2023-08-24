@@ -12,10 +12,10 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use RalphJSmit\Filament\SEO\SEO;
 
 class ArticleResource extends Resource
 {
@@ -56,6 +56,7 @@ class ArticleResource extends Resource
                                         'in-active' => 'In Active',
                                     ])
                                     ->default('active'),
+                                Forms\Components\Toggle::make('is_featured'),
                                 Forms\Components\MarkdownEditor::make('content')
                                     ->columnSpan('full'),
                             ])
@@ -238,6 +239,9 @@ class ArticleResource extends Resource
                         'success' => 'active',
                     ])
                     ->toggleable(),
+                Tables\Columns\IconColumn::make('is_featured')
+                    ->boolean()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('author.name')
                     ->searchable()
                     ->label('Author')
@@ -267,6 +271,8 @@ class ArticleResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\Filter::make('is_featured')
+                    ->query(fn(Builder $query) => $query->where('is_featured', true)),
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
@@ -286,9 +292,22 @@ class ArticleResource extends Resource
                     ->native(false),
             ])
             ->actions([
+                Action::make('Feature')
+                    ->action(function (Article $record) {
+                        $record->is_featured = true;
+                        $record->save();
+                    })
+                    ->hidden(fn(Article $record): bool => $record->is_featured),
+                Action::make('Un Feature')
+                    ->action(function (Article $record) {
+                        $record->is_featured = false;
+                        $record->save();
+                    })
+                    ->visible(fn(Article $record): bool => $record->is_featured),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

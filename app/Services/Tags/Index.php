@@ -26,4 +26,13 @@ class Index
         ]);
         return $this->tagRepository->index(request()->paginate);
     }
+
+    /**
+     * @param int $value
+     * @return Collection
+     */
+    public function latest(int $value = 5): Collection
+    {
+        return $this->tagRepository->latest($value);
+    }
 }

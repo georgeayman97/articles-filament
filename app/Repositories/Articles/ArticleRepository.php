@@ -25,10 +25,20 @@ class ArticleRepository extends Repository implements ArticleRepositoryInterface
      */
     public function index($paginate = null): Collection|LengthAwarePaginator
     {
-        if ($paginate) {
-            return $this->model->whereStatus(ArticleStatus::ACTIVE)->paginate($paginate);
-        }
-        return $this->model->whereStatus(ArticleStatus::ACTIVE)->get();
+        $query = $this->model->whereStatus(ArticleStatus::ACTIVE);
+
+        return $paginate ? $query->paginate($paginate) : $query->get();
+    }
+
+    /**
+     * @param null $paginate
+     * @return Collection|LengthAwarePaginator
+     */
+    public function featured($paginate = null): Collection|LengthAwarePaginator
+    {
+        $query = $this->model->whereStatus(ArticleStatus::ACTIVE)->where('is_featured',1);
+
+        return $paginate ? $query->paginate($paginate) : $query->latest()->limit(5)->get();
     }
 
     /**
